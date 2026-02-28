@@ -1,0 +1,472 @@
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="誰でも気軽に飲んで歌える歌謡スナックです">
+    <title>目黒権之助坂歌謡スナックナポリタン</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/microcms-js-sdk@latest/dist/umd/microcms-js-sdk.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* 90年代個人ホームページ風のノスタルジック・デザイン */
+        body {
+            background-color: #FFFF65; 
+            color: #000080; /* 紺色テキスト */
+            font-family: "MS PGothic", "MS Gothic", "Osaka", sans-serif;
+            line-height: 1.5;
+        }
+
+        /* コンテンツ配置用のコンテナ */
+        .content-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ナビゲーションリンク */
+        .nav-link-retro {
+            color: #FF4500; 
+            font-weight: bold;
+            text-decoration: underline;
+            font-size: 18px;
+            margin: 0 15px;
+            white-space: nowrap;
+        }
+        .nav-link-retro:hover {
+            color: #FF0000;
+            background-color: #FFFFFF;
+        }
+
+        /* リンク集専用のテキストリンク */
+        .link-item {
+            color: #0000FF;
+            text-decoration: underline;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .link-item:hover {
+            color: #FF0000;
+            background-color: #FFFFFF;
+        }
+
+        /* セクション見出し */
+        .section-header {
+            background: linear-gradient(to right, #000080, #8080FF);
+            color: #FFFFFF;
+            padding: 8px 15px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            font-size: 20px;
+            border-left: 10px solid #FF0000;
+            box-shadow: 2px 2px 0px #333;
+        }
+
+        /* ページトップへ戻るリンク */
+        .back-to-top {
+            display: block;
+            text-align: right;
+            font-size: 13px;
+            color: #0000FF;
+            text-decoration: underline;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        /* アクセスカウンター（電卓・デジタル風デザイン） */
+        .counter-container {
+            background-color: #222;
+            padding: 5px;
+            border: 3px inset #888;
+            display: inline-block;
+            margin: 0 10px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+        .counter {
+            background-color: #000;
+            color: #00FF00;
+            font-family: 'Orbitron', 'Courier New', Courier, monospace;
+            padding: 4px 12px;
+            border: 1px solid #333;
+            letter-spacing: 2px;
+            font-size: 22px;
+            text-shadow: 0 0 8px rgba(0, 255, 0, 0.8); /* 発光エフェクト */
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        /* ニュース詳細モーダル（角丸モダンデザイン） */
+        #news-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background: #FFFFFF;
+            border: 3px solid #000080;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            width: 90%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+        .modal-title-bar {
+            background: #FFFFFF;
+            padding: 15px 20px 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .modal-title-bar button {
+            background: transparent;
+            border: none;
+            color: #999;
+            font-size: 28px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            transition: color 0.2s;
+            margin-top: -5px;
+        }
+        .modal-title-bar button:hover {
+            color: #FF4500;
+        }
+        .modal-body {
+            padding: 0 20px 20px;
+            background: #FFF;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px dashed #000080;
+            margin: 40px 0;
+        }
+
+        /* ロゴ画像調整 */
+        .title-logo {
+            display: inline-block;
+            vertical-align: middle;
+            height: 1em;
+            margin: 0 10px;
+            border: 1px solid #000;
+        }
+
+        /* お知らせ注入エリア */
+        #news-injected {
+            margin: 15px 0 0;
+            text-align: left;
+            width: 100%;
+        }
+        .news-entry {
+            padding: 2px 100px; 
+            margin-bottom: 2px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: flex-start;
+        }
+        @media (max-width: 640px) {
+            .news-entry {
+                padding: 2px 25px;
+            }
+        }
+        .news-date {
+            color: #666;
+            min-width: 95px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <div id="top"></div>
+
+    <div class="content-wrapper">
+        
+        <header class="text-center mb-12">
+            <h1 class="text-2xl md:text-4xl font-black italic tracking-tighter mb-4 text-[#E64A19] flex items-center justify-center flex-wrap text-center" style="text-shadow: 2px 2px #AAA;">
+                <span class="w-full mb-2">★☆ 目黒権之助坂</span>
+                <span>歌謡スナック</span> <img src="images/logo.jpg" alt="Logo" class="title-logo h-[1.2em] md:h-[1.2em]" onerror="this.style.display='none'; this.after('[LOGO]');">
+                <span>ナポリタン ☆★</span>
+            </h1>
+            
+            <div class="mb-8 text-center pb-4">
+                <div class="mt-4 mb-6">
+                    <img src="images/main.jpg" alt="Main View" class="mx-auto border-2 border-navy shadow-lg max-w-full h-auto md:max-w-xl" onerror="this.style.display='none'; this.after('[IMAGE: main.jpg]');">
+                </div>
+                <p class="mt-4 text-xs md:text-sm font-bold flex items-center justify-center flex-wrap">
+                    あなたは 
+                    <span class="counter-container">
+                        <span class="counter" id="visitor-counter">000000</span>
+                    </span>
+                    人目の訪問者です
+                </p>
+                <p class="text-xs md:text-sm font-bold text-red-600 mt-1">
+                    ★キリ番ゲットで1杯サービス！★
+                </p>
+
+                <div id="news-injected"></div>
+            </div>
+            
+            <nav class="flex flex-wrap justify-center py-2">
+                <a href="#intro" class="nav-link-retro">お店紹介</a>
+                <a href="#price" class="nav-link-retro">料金ｼｽﾃﾑ</a>
+                <a href="#access" class="nav-link-retro">ｱｸｾｽ</a>
+                <a href="#links" class="nav-link-retro">ﾘﾝｸ集</a>
+                <a href="#contact" class="nav-link-retro">お問合せ</a>
+            </nav>
+        </header>
+
+        <div class="space-y-24">
+            <section id="intro">
+                <div class="section-header">お店紹介</div>
+                <div class="md:flex gap-8 items-start">
+                    <div class="w-full md:w-1/2">
+                        <img src="images/tennai.jpg" alt="店内写真" class="w-full border-4 border-double border-navy mb-4 shadow-lg" onerror="this.style.display='none'; this.after('[IMAGE: tennai.jpg]');">
+                    </div>
+                    <div class="md:w-1/2">
+                        <p class="text-base md:text-lg leading-loose font-bold text-navy">
+                            誰でも気軽に飲んで歌える歌謡スナックです<br><br>
+                            お食事の持ち込みはオッケーです<br><br>
+                            お友達とワイワイ使ってください♪
+                        </p>
+
+                        <div class="mt-8 p-4 border-2 border-red-600 border-dashed bg-white/30 text-center font-bold">
+                            <p class="text-red-600 text-lg mb-2">★スタッフ募集★</p>
+                            <p class="text-sm md:text-base leading-relaxed text-navy">
+                                ナポリタンでは日替わりの店長を募集しています<br>
+                                （曜日固定、シフト制も可）<br>
+                                目黒に友達の多い方、一回スナックのママやってみたい方、ぜひお問合せください
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+                <a href="#top" class="back-to-top">▲ ページトップへ戻る</a>
+            </section>
+
+            <section id="price">
+                <div class="section-header">料金ｼｽﾃﾑ</div>
+                <div class="md:flex gap-8 items-start">
+                    <div class="w-full md:w-1/2">
+                        <img src="images/price.jpg" alt="料金表イメージ" class="w-full border-4 border-double border-navy mb-4 shadow-lg" onerror="this.style.display='none'; this.after('[IMAGE: price.jpg]');">
+                    </div>
+                    <div class="md:w-1/2 space-y-4">
+                        <div class="bg-white/30 p-4 border border-navy shadow-sm font-bold">
+                            
+                            <p class="text-red-600 text-lg mb-2 underline">■ セット料金（飲み放題＆カラオケ歌い放題）</p>
+                            <table class="w-full text-sm border border-navy bg-white/20 text-navy mb-2">
+                                <tr>
+                                    <th class="p-2 border border-navy bg-blue-100/50 text-left w-1/2">1時間</th>
+                                    <td class="p-2 border border-navy text-right text-red-600 text-lg">3,000円</td>
+                                </tr>
+                                <tr>
+                                    <th class="p-2 border border-navy bg-blue-100/50 text-left">以降1時間毎</th>
+                                    <td class="p-2 border border-navy text-right">2,000円</td>
+                                </tr>
+                            </table>
+                            <p class="text-[12px] text-navy mb-6">
+                                【飲み放題メニュー】<br>
+                                金宮 / トリス / 氷結レモン / ソフトドリンク
+                            </p>
+
+                            <p class="text-red-600 text-lg mb-2 underline">■ ＋オプションメニュー</p>
+                            
+                            <p class="text-sm text-navy bg-blue-100/50 p-1 border border-navy border-b-0 mt-2">▼ ボトル（※キープ6か月可）</p>
+                            <table class="w-full text-[11px] md:text-xs border border-navy bg-white/20 text-navy mb-3">
+                                <tr><td class="p-1 border border-navy">茉莉花パック / 二階堂 / 黒霧島</td><td class="p-1 border border-navy text-right w-20">各 6,000円</td></tr>
+                                <tr><td class="p-1 border border-navy">角</td><td class="p-1 border border-navy text-right">8,000円</td></tr>
+                                <tr><td class="p-1 border border-navy">知多</td><td class="p-1 border border-navy text-right">16,000円</td></tr>
+                                <tr><td class="p-1 border border-navy">山崎 / 白州</td><td class="p-1 border border-navy text-right">25,000円</td></tr>
+                                <tr><td class="p-1 border border-navy">山崎12年 / 白州12年</td><td class="p-1 border border-navy text-right">45,000円</td></tr>
+                            </table>
+
+                            <p class="text-sm text-navy bg-blue-100/50 p-1 border border-navy border-b-0">▼ ドリンク</p>
+                            <table class="w-full text-[11px] md:text-xs border border-navy bg-white/20 text-navy mb-3">
+                                <tr><td class="p-1 border border-navy">焼酎各種 / 角 / カクテル各種 他</td><td class="p-1 border border-navy text-right w-20">500円</td></tr>
+                                <tr><td class="p-1 border border-navy">ビール (一番搾り小瓶)</td><td class="p-1 border border-navy text-right">800円</td></tr>
+                                <tr><td class="p-1 border border-navy">ハブ酒 / テキーラ / スタッフドリンク 他</td><td class="p-1 border border-navy text-right">1,000円</td></tr>
+                                <tr><td class="p-1 border border-navy">知多 / 碧 / 山崎 / 白州 他</td><td class="p-1 border border-navy text-right">1,500円～</td></tr>
+                            </table>
+
+                            <p class="text-sm text-navy bg-blue-100/50 p-1 border border-navy border-b-0">▼ ワイン・シャンパン</p>
+                            <table class="w-full text-[11px] md:text-xs border border-navy bg-white/20 text-navy mb-4">
+                                <tr><td class="p-1 border border-navy">ブレッド＆バター (赤/白)</td><td class="p-1 border border-navy text-right w-24">各 12,000円</td></tr>
+                                <tr><td class="p-1 border border-navy">ヴーヴクリコ イエロー</td><td class="p-1 border border-navy text-right">25,000円</td></tr>
+                                <tr><td class="p-1 border border-navy">ペリエジュエ ベルエポック 他</td><td class="p-1 border border-navy text-right">38,000円～</td></tr>
+                            </table>
+
+                            <hr class="my-3 border-navy/50 border-dashed">
+                            
+                            <ul class="text-[10px] text-red-600 leading-tight space-y-1 list-none p-0">
+                                <li>※お支払いはキャッシュレス決済（クレジットカード/PayPay）のみとなります（現金不可）。</li>
+                                <li>※料金は消費税・サービス料込みです。時間延長の場合は自動で延長扱いとなります。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <a href="#top" class="back-to-top">▲ ページトップへ戻る</a>
+            </section>
+
+            <section id="access">
+                <div class="section-header">ｱｸｾｽ・営業時間</div>
+                
+                <div class="mb-4 text-center">
+                    <img src="images/map.jpg" alt="アクセスマップ" class="mx-auto border-4 border-double border-navy shadow-lg max-w-full h-auto" onerror="this.style.display='none'; this.after('[IMAGE: map.jpg]');">
+                </div>
+                
+                <div class="p-6 border-2 border-dashed border-navy font-bold text-center md:text-left text-navy">
+                    <p class="text-lg">住所：東京都目黒区下目黒1-5-20 コム・トーヨービル 2F</p>
+                    <p class="mt-4">目黒駅西口から徒歩4分</p>
+                    <p class="mt-4">営業時間：21:00 〜 4:00 ／ 定休日：日曜日</p>
+                </div>
+                <a href="#top" class="back-to-top">▲ ページトップへ戻る</a>
+            </section>
+
+            <hr>
+
+            <section id="links">
+                <div class="section-header">ﾘﾝｸ集</div>
+                <div class="bg-white/20 p-8 border border-dotted border-navy md:flex justify-between items-start">
+                    <ul class="space-y-4 list-none p-0">
+                        <li><a href="https://www.google.co.jp" target="_blank" rel="noopener noreferrer" class="link-item">・Google</a></li>
+                        <li><a href="https://877uranai.pages.dev/" target="_blank" rel="noopener noreferrer" class="link-item">・開運バナナ占い</a></li>
+                        <li><a href="https://www.yahoo.co.jp" target="_blank" rel="noopener noreferrer" class="link-item">・Yahoo! JAPAN</a></li>
+                        <li><a href="#" class="link-item">・昭和レトロ同盟 (会員NO.123)</a></li>
+                    </ul>
+                    <div class="mt-8 md:mt-0 p-4 border-2 border-red-600 text-red-600 font-bold text-center bg-white/50 flex items-center justify-center">
+                        <p class="text-xl">相互リンク募集中！！</p>
+                    </div>
+                </div>
+                <a href="#top" class="back-to-top">▲ ページトップへ戻る</a>
+            </section>
+
+            <section id="contact">
+                <div class="section-header">お問合せ</div>
+                <div class="bg-white/30 border-4 border-double border-navy p-6 md:p-10">
+                    <div class="text-center font-bold text-navy">
+                        <p class="text-lg md:text-xl mb-4">
+                            電話番号：<a href="tel:0364203445" class="text-red-600 hover:text-red-800 underline text-2xl md:text-3xl">03-6420-3445</a>
+                        </p>
+                        <p class="text-sm md:text-base">
+                            （受付時間：２１:００〜４:００ / 定休日：日曜日）
+                        </p>
+                    </div>
+                </div>
+                <a href="#top" class="back-to-top">▲ ページトップへ戻る</a>
+            </section>
+        </div>
+
+        <footer class="mt-20 border-t-2 border-navy pt-10 text-center text-[11px] pb-10">
+            <p class="font-bold italic text-gray-400 font-sans">Copyright (C) 2026 BAR Napolitan All Rights Reserved. (Ver 2.19.8)</p>
+        </footer>
+    </div>
+
+    <div id="news-modal" style="display: none;">
+        <div class="modal-title-bar">
+            <div id="modal-date" class="inline-block bg-red-100 text-red-600 text-sm font-bold px-3 py-1 rounded tracking-widest"></div>
+            <button onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div id="modal-title-text" class="text-xl font-bold text-navy mb-4 border-b-2 border-navy pb-2"></div>
+            <div id="modal-content" class="text-sm text-navy leading-relaxed"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // あなたのFirebase設定
+        const firebaseConfig = {
+            apiKey: "AIzaSyCw7OHxsf0bOikZhn4PGqMfYsi2wzD0IWY",
+            authDomain: "k796-1f1ec.firebaseapp.com",
+            projectId: "k796-1f1ec",
+            storageBucket: "k796-1f1ec.firebasestorage.app",
+            messagingSenderId: "360237524696",
+            appId: "1:360237524696:web:f456c29f81b3b6894119ad"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = 'meguro-bar-napolitan-production';
+
+        // 1. カウンター機能 (Firestore)
+        async function initCounter() {
+            const counterEl = document.getElementById('visitor-counter');
+            try {
+                await signInAnonymously(auth);
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        const counterRef = doc(db, 'artifacts', appId, 'public', 'data', 'visitor_stats', 'global_counter');
+                        const snap = await getDoc(counterRef);
+                        if (!snap.exists()) {
+                            await setDoc(counterRef, { count: 1 }); 
+                        } else {
+                            await updateDoc(counterRef, { count: increment(1) });
+                        }
+                        const updatedSnap = await getDoc(counterRef);
+                        counterEl.textContent = String(updatedSnap.data().count).padStart(6, '0');
+                    }
+                });
+            } catch (err) {
+                console.error('Counter Error:', err);
+            }
+        }
+
+        // 2. microCMS連携
+        const SERVICE_DOMAIN = 'barinfo';
+        const API_KEY = 'NZ8dVdUenjXm1NdvlsXBKTAEqCoMjnGeXWXb';
+
+        async function loadNews() {
+            const container = document.getElementById('news-injected');
+            try {
+                const client = microcms.createClient({ serviceDomain: SERVICE_DOMAIN, apiKey: API_KEY });
+                const res = await client.get({ endpoint: 'news' });
+                if (!res.contents || res.contents.length === 0) return;
+
+                container.innerHTML = res.contents.map(item => `
+                    <div class="news-entry">
+                        <span class="news-date">[${new Date(item.date).toLocaleDateString()}]</span>
+                        <a href="javascript:void(0)" class="link-item news-link ml-2" data-id="${item.id}">${item.title}</a>
+                    </div>
+                `).join('');
+
+                document.querySelectorAll('.news-link').forEach(link => {
+                    link.onclick = () => {
+                        const item = res.contents.find(c => c.id === link.dataset.id);
+                        openModal(item);
+                    };
+                });
+            } catch (err) {
+                console.error('microCMS Error:', err);
+            }
+        }
+
+        window.openModal = (item) => {
+            document.getElementById('modal-title-text').innerText = item.title;
+            document.getElementById('modal-date').innerText = new Date(item.date).toLocaleDateString();
+            document.getElementById('modal-content').innerHTML = item.contents || '';
+            document.getElementById('news-modal').style.display = 'block';
+        };
+
+        window.closeModal = () => {
+            document.getElementById('news-modal').style.display = 'none';
+        };
+
+        window.onload = () => {
+            initCounter();
+            loadNews();
+        };
+
+    </script>
+</body>
+</html>
+
+```
